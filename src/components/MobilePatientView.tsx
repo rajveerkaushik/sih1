@@ -15,6 +15,7 @@ import {
   Plus,
   LogOut
 } from 'lucide-react';
+import { mockPatients } from '../data/mockData';
 
 interface MobilePatientViewProps {
   onLogout: () => void;
@@ -24,13 +25,24 @@ const MobilePatientView: React.FC<MobilePatientViewProps> = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState<'home' | 'diet' | 'progress' | 'profile'>('home');
   const [waterIntake, setWaterIntake] = useState(6);
   const [bowelMovement, setBowelMovement] = useState(false);
+  const [completedMeals, setCompletedMeals] = useState<number[]>([0, 1]);
+
+  const currentPatient = mockPatients[0]; // Priya Sharma
 
   const todayMeals = [
-    { time: '8:00 AM', meal: 'Breakfast', items: ['Oats Porridge', 'Almonds', 'Herbal Tea'], completed: true },
-    { time: '1:00 PM', meal: 'Lunch', items: ['Basmati Rice', 'Dal', 'Mixed Vegetables'], completed: true },
-    { time: '5:00 PM', meal: 'Snack', items: ['Green Tea', 'Dates'], completed: false },
-    { time: '7:30 PM', meal: 'Dinner', items: ['Roti', 'Sabzi', 'Buttermilk'], completed: false },
+    { time: '8:00 AM', meal: 'Breakfast', items: ['Oats Porridge', 'Almonds', 'Herbal Tea'] },
+    { time: '1:00 PM', meal: 'Lunch', items: ['Basmati Rice', 'Moong Dal', 'Mixed Vegetables'] },
+    { time: '5:00 PM', meal: 'Snack', items: ['Green Tea', 'Dates'] },
+    { time: '7:30 PM', meal: 'Dinner', items: ['Roti', 'Sabzi', 'Buttermilk'] },
   ];
+
+  const toggleMealCompletion = (index: number) => {
+    if (completedMeals.includes(index)) {
+      setCompletedMeals(completedMeals.filter(i => i !== index));
+    } else {
+      setCompletedMeals([...completedMeals, index]);
+    }
+  };
 
   const weekProgress = [
     { day: 'Mon', completed: 4 },
@@ -60,7 +72,7 @@ const MobilePatientView: React.FC<MobilePatientViewProps> = ({ onLogout }) => {
             </div>
             <div>
               <h1 className="text-lg font-bold text-gray-800">AyurDiet</h1>
-              <p className="text-xs text-gray-500">Welcome, Priya</p>
+              <p className="text-xs text-gray-500">Welcome, {currentPatient.name.split(' ')[0]}</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
@@ -136,9 +148,9 @@ const MobilePatientView: React.FC<MobilePatientViewProps> = ({ onLogout }) => {
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-3">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          meal.completed ? 'bg-green-100' : 'bg-gray-100'
+                          completedMeals.includes(index) ? 'bg-green-100' : 'bg-gray-100'
                         }`}>
-                          {meal.completed ? 
+                          {completedMeals.includes(index) ? 
                             <CheckCircle className="w-5 h-5 text-green-600" /> : 
                             <Clock className="w-5 h-5 text-gray-400" />
                           }
@@ -157,6 +169,14 @@ const MobilePatientView: React.FC<MobilePatientViewProps> = ({ onLogout }) => {
                           </div>
                         </div>
                       </div>
+                      <button
+                        onClick={() => toggleMealCompletion(index)}
+                        className={`p-2 rounded-full ${
+                          completedMeals.includes(index) ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
+                        }`}
+                      >
+                        {completedMeals.includes(index) ? <CheckCircle className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -186,9 +206,9 @@ const MobilePatientView: React.FC<MobilePatientViewProps> = ({ onLogout }) => {
                       <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
                         <span className="text-sm text-gray-700">{item}</span>
                         <button className={`w-6 h-6 rounded-full ${
-                          meal.completed ? 'bg-green-500 text-white' : 'border-2 border-gray-300'
+                          completedMeals.includes(index) ? 'bg-green-500 text-white' : 'border-2 border-gray-300'
                         }`}>
-                          {meal.completed && <CheckCircle className="w-4 h-4" />}
+                          {completedMeals.includes(index) && <CheckCircle className="w-4 h-4" />}
                         </button>
                       </div>
                     ))}
@@ -281,10 +301,12 @@ const MobilePatientView: React.FC<MobilePatientViewProps> = ({ onLogout }) => {
           <div className="p-4 space-y-4">
             <div className="text-center py-6">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-medium text-green-700">PS</span>
+                <span className="text-2xl font-medium text-green-700">
+                  {currentPatient.name.split(' ').map(n => n[0]).join('')}
+                </span>
               </div>
-              <h2 className="text-xl font-bold text-gray-800">Priya Sharma</h2>
-              <p className="text-gray-600">32 years • Vata-Pitta</p>
+              <h2 className="text-xl font-bold text-gray-800">{currentPatient.name}</h2>
+              <p className="text-gray-600">{currentPatient.age} years • {currentPatient.constitution}</p>
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
@@ -292,19 +314,19 @@ const MobilePatientView: React.FC<MobilePatientViewProps> = ({ onLogout }) => {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Current Weight</span>
-                  <span className="font-medium">65 kg</span>
+                  <span className="font-medium">{currentPatient.weight} kg</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Target Weight</span>
-                  <span className="font-medium">65 kg</span>
+                  <span className="font-medium">{currentPatient.weight} kg</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">BMI</span>
-                  <span className="font-medium">22.4</span>
+                  <span className="font-medium">{currentPatient.bmi}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Constitution</span>
-                  <span className="font-medium text-amber-600">Vata-Pitta</span>
+                  <span className="font-medium text-amber-600">{currentPatient.constitution}</span>
                 </div>
               </div>
             </div>
