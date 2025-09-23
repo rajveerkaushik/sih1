@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, Download, Eye, Clock } from 'lucide-react';
 import Sidebar from './Sidebar';
+import { mockPatients, mockFoodItems } from '../data/mockData';
 
 type CurrentPage = 'login' | 'dashboard' | 'patient-profile' | 'food-database' | 'diet-builder' | 'reports' | 'mobile-patient';
 
@@ -27,14 +28,14 @@ const DietChartBuilder: React.FC<DietChartBuilderProps> = ({ onNavigate }) => {
   const [selectedPatient, setSelectedPatient] = useState('Priya Sharma');
   const [chartTitle, setChartTitle] = useState('Weight Management Plan');
   const [duration, setDuration] = useState('4');
+  const [showFoodSelector, setShowFoodSelector] = useState<string | null>(null);
   const [meals, setMeals] = useState<Meal[]>([
     {
       id: 'breakfast',
       name: 'Breakfast',
       time: '8:00 AM',
       items: [
-        { id: '1', name: 'Oats Porridge', quantity: '1 bowl', calories: 150, doshaEffect: 'Tridoshic' },
-        { id: '2', name: 'Almonds', quantity: '5 pieces', calories: 35, doshaEffect: 'Vata+' }
+        { id: '1', name: 'Oats Porridge', quantity: '1 bowl', calories: 150, doshaEffect: 'Tridoshic' }
       ]
     },
     {
@@ -42,8 +43,7 @@ const DietChartBuilder: React.FC<DietChartBuilderProps> = ({ onNavigate }) => {
       name: 'Lunch',
       time: '1:00 PM',
       items: [
-        { id: '3', name: 'Basmati Rice', quantity: '1 cup', calories: 200, doshaEffect: 'Tridoshic' },
-        { id: '4', name: 'Dal (Moong)', quantity: '1 cup', calories: 180, doshaEffect: 'Tridoshic' }
+        { id: '3', name: 'Basmati Rice', quantity: '1 cup', calories: 200, doshaEffect: 'Tridoshic' }
       ]
     },
     {
@@ -57,12 +57,12 @@ const DietChartBuilder: React.FC<DietChartBuilderProps> = ({ onNavigate }) => {
       name: 'Dinner',
       time: '7:30 PM',
       items: [
-        { id: '5', name: 'Roti (Wheat)', quantity: '2 pieces', calories: 160, doshaEffect: 'Kapha+' }
+        { id: '5', name: 'Moong Dal', quantity: '1 cup', calories: 180, doshaEffect: 'Tridoshic' }
       ]
     }
   ]);
 
-  const patients = ['Priya Sharma', 'Rajesh Kumar', 'Anita Singh', 'Vikram Patel'];
+  const patients = mockPatients.map(p => p.name);
 
   const totalCalories = meals.reduce((total, meal) => 
     total + meal.items.reduce((mealTotal, item) => mealTotal + item.calories, 0), 0
@@ -76,12 +76,16 @@ const DietChartBuilder: React.FC<DietChartBuilderProps> = ({ onNavigate }) => {
   };
 
   const addMealItem = (mealId: string) => {
+    setShowFoodSelector(mealId);
+  };
+
+  const addFoodToMeal = (mealId: string, foodItem: any) => {
     const newItem: MealItem = {
       id: Date.now().toString(),
-      name: 'New Food Item',
+      name: foodItem.name,
       quantity: '1 serving',
-      calories: 100,
-      doshaEffect: 'Tridoshic'
+      calories: Math.round(foodItem.calories / 4), // Approximate serving size
+      doshaEffect: foodItem.doshaEffect
     };
 
     setMeals(meals.map(meal => 
@@ -89,6 +93,7 @@ const DietChartBuilder: React.FC<DietChartBuilderProps> = ({ onNavigate }) => {
         ? { ...meal, items: [...meal.items, newItem] }
         : meal
     ));
+    setShowFoodSelector(null);
   };
 
   const removeMealItem = (mealId: string, itemId: string) => {
@@ -266,6 +271,47 @@ const DietChartBuilder: React.FC<DietChartBuilderProps> = ({ onNavigate }) => {
                             </button>
                           </div>
                         ))}
+                      </div>
+                    )}
+
+                    {/* Food Selector Modal */}
+                    {showFoodSelector === meal.id && (
+                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+                          <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold">Select Food Item</h3>
+                            <button 
+                              onClick={() => setShowFoodSelector(null)}
+                              className="text-gray-500 hover:text-gray-700"
+                            >
+                              ×
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-1 gap-3">
+                            {mockFoodItems.map((food) => (
+                              <button
+                                key={food.id}
+                                onClick={() => addFoodToMeal(meal.id, food)}
+                                className="text-left p-3 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-300"
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <p className="font-medium text-gray-800">{food.name}</p>
+                                    <p className="text-sm text-gray-600">{food.category} • {food.calories} cal/100g</p>
+                                  </div>
+                                  <span className={`px-2 py-1 text-xs rounded-full ${
+                                    food.doshaEffect === 'Tridoshic' ? 'bg-green-100 text-green-700' :
+                                    food.doshaEffect === 'Vata+' ? 'bg-purple-100 text-purple-700' :
+                                    food.doshaEffect === 'Pitta+' ? 'bg-red-100 text-red-700' :
+                                    'bg-yellow-100 text-yellow-700'
+                                  }`}>
+                                    {food.doshaEffect}
+                                  </span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>

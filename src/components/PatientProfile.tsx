@@ -12,6 +12,7 @@ import {
   Download
 } from 'lucide-react';
 import Sidebar from './Sidebar';
+import { mockPatients, mockDietCharts } from '../data/mockData';
 
 type CurrentPage = 'login' | 'dashboard' | 'patient-profile' | 'food-database' | 'diet-builder' | 'reports' | 'mobile-patient';
 
@@ -21,29 +22,11 @@ interface PatientProfileProps {
 
 const PatientProfile: React.FC<PatientProfileProps> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState<'profile' | 'diet-charts' | 'progress' | 'reports'>('profile');
+  const [selectedPatientId, setSelectedPatientId] = useState('1');
 
-  const patient = {
-    name: 'Priya Sharma',
-    age: 32,
-    gender: 'Female',
-    weight: '65 kg',
-    height: '5\'4"',
-    bmi: '22.4',
-    bloodGroup: 'A+',
-    phone: '+91 98765 43210',
-    email: 'priya.sharma@email.com',
-    address: 'Mumbai, Maharashtra',
-    occupation: 'Software Engineer',
-    constitution: 'Vata-Pitta',
-    allergies: 'Dairy products, Nuts',
-    medicalHistory: 'Migraine, Anxiety',
-  };
+  const patient = mockPatients.find(p => p.id === selectedPatientId) || mockPatients[0];
+  const patientDietCharts = mockDietCharts.filter(chart => chart.patientId === selectedPatientId);
 
-  const dietCharts = [
-    { date: '2024-01-15', title: 'Weight Management Plan', status: 'Active', duration: '4 weeks' },
-    { date: '2023-12-01', title: 'Digestive Health Focus', status: 'Completed', duration: '6 weeks' },
-    { date: '2023-10-15', title: 'Stress Relief Diet', status: 'Completed', duration: '8 weeks' },
-  ];
 
   const progressData = [
     { metric: 'Weight', current: '65 kg', previous: '68 kg', change: '-3 kg', trend: 'down' },
@@ -80,7 +63,9 @@ const PatientProfile: React.FC<PatientProfileProps> = ({ onNavigate }) => {
               </button>
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <span className="text-lg font-medium text-green-700">PS</span>
+                  <span className="text-lg font-medium text-green-700">
+                    {patient.name.split(' ').map(n => n[0]).join('')}
+                  </span>
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-gray-800">{patient.name}</h1>
@@ -139,7 +124,7 @@ const PatientProfile: React.FC<PatientProfileProps> = ({ onNavigate }) => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-sm text-gray-600">Weight</label>
-                      <p className="font-medium text-gray-800">{patient.weight}</p>
+                      <p className="font-medium text-gray-800">{patient.weight} kg</p>
                     </div>
                     <div>
                       <label className="text-sm text-gray-600">Height</label>
@@ -210,7 +195,7 @@ const PatientProfile: React.FC<PatientProfileProps> = ({ onNavigate }) => {
                   <h3 className="text-lg font-semibold text-gray-800">Diet Chart History</h3>
                 </div>
                 <div className="divide-y divide-gray-200">
-                  {dietCharts.map((chart, index) => (
+                  {patientDietCharts.map((chart, index) => (
                     <div key={index} className="p-6 hover:bg-gray-50">
                       <div className="flex items-center justify-between">
                         <div>

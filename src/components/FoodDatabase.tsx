@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Filter, Plus, Eye } from 'lucide-react';
 import Sidebar from './Sidebar';
+import { mockFoodItems } from '../data/mockData';
 
 type CurrentPage = 'login' | 'dashboard' | 'patient-profile' | 'food-database' | 'diet-builder' | 'reports' | 'mobile-patient';
 
@@ -16,100 +17,8 @@ const FoodDatabase: React.FC<FoodDatabaseProps> = ({ onNavigate }) => {
   const categories = ['All', 'Grains', 'Vegetables', 'Fruits', 'Spices', 'Legumes', 'Dairy', 'Oils'];
   const doshas = ['All', 'Vata+', 'Pitta+', 'Kapha+', 'Tridoshic'];
 
-  const foodItems = [
-    {
-      name: 'Basmati Rice',
-      category: 'Grains',
-      calories: 345,
-      protein: 7.1,
-      carbs: 78,
-      fat: 0.6,
-      fiber: 1.8,
-      doshaEffect: 'Tridoshic',
-      rasa: 'Sweet',
-      virya: 'Cooling',
-      vipaka: 'Sweet',
-      properties: ['Easy to digest', 'Nourishing', 'Calming'],
-      ayurvedicNote: 'Excellent for Pitta constitution'
-    },
-    {
-      name: 'Turmeric',
-      category: 'Spices',
-      calories: 312,
-      protein: 9.7,
-      carbs: 67.1,
-      fat: 3.2,
-      fiber: 22.7,
-      doshaEffect: 'Kapha+',
-      rasa: 'Bitter, Pungent',
-      virya: 'Heating',
-      vipaka: 'Pungent',
-      properties: ['Anti-inflammatory', 'Digestive', 'Blood purifier'],
-      ayurvedicNote: 'Reduces Kapha, increases Pitta in excess'
-    },
-    {
-      name: 'Almonds',
-      category: 'Nuts',
-      calories: 576,
-      protein: 21.2,
-      carbs: 21.7,
-      fat: 49.4,
-      fiber: 12.5,
-      doshaEffect: 'Vata+',
-      rasa: 'Sweet',
-      virya: 'Heating',
-      vipaka: 'Sweet',
-      properties: ['Nourishing', 'Brain tonic', 'Strengthening'],
-      ayurvedicNote: 'Excellent for Vata, soak overnight for better digestion'
-    },
-    {
-      name: 'Spinach',
-      category: 'Vegetables',
-      calories: 23,
-      protein: 2.9,
-      carbs: 3.6,
-      fat: 0.4,
-      fiber: 2.2,
-      doshaEffect: 'Pitta+',
-      rasa: 'Sweet, Astringent',
-      virya: 'Cooling',
-      vipaka: 'Sweet',
-      properties: ['Blood building', 'Cooling', 'Detoxifying'],
-      ayurvedicNote: 'Good for Pitta, may increase Vata in excess'
-    },
-    {
-      name: 'Ginger',
-      category: 'Spices',
-      calories: 80,
-      protein: 1.8,
-      carbs: 17.8,
-      fat: 0.8,
-      fiber: 2,
-      doshaEffect: 'Vata+',
-      rasa: 'Pungent',
-      virya: 'Heating',
-      vipaka: 'Sweet',
-      properties: ['Digestive fire enhancer', 'Anti-nausea', 'Warming'],
-      ayurvedicNote: 'Universal digestive aid, use moderately in Pitta'
-    },
-    {
-      name: 'Coconut Oil',
-      category: 'Oils',
-      calories: 862,
-      protein: 0,
-      carbs: 0,
-      fat: 100,
-      fiber: 0,
-      doshaEffect: 'Pitta+',
-      rasa: 'Sweet',
-      virya: 'Cooling',
-      vipaka: 'Sweet',
-      properties: ['Moisturizing', 'Cooling', 'Antimicrobial'],
-      ayurvedicNote: 'Excellent for Pitta, good for all doshas in moderation'
-    }
-  ];
 
-  const filteredFoods = foodItems.filter(food => {
+  const filteredFoods = mockFoodItems.filter(food => {
     const matchesSearch = food.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || food.category === selectedCategory;
     const matchesDosha = selectedDosha === 'All' || food.doshaEffect === selectedDosha;

@@ -11,6 +11,7 @@ import {
   MoreVertical
 } from 'lucide-react';
 import Sidebar from './Sidebar';
+import { mockPatients, mockAppointments, mockStats } from '../data/mockData';
 
 type CurrentPage = 'login' | 'dashboard' | 'patient-profile' | 'food-database' | 'diet-builder' | 'reports' | 'mobile-patient';
 
@@ -20,25 +21,14 @@ interface DoctorDashboardProps {
 
 const DoctorDashboard: React.FC<DoctorDashboardProps> = ({ onNavigate }) => {
   const stats = [
-    { label: 'Total Patients', value: '248', icon: Users, color: 'bg-blue-500', change: '+12%' },
-    { label: 'Active Diet Plans', value: '89', icon: FileText, color: 'bg-green-500', change: '+8%' },
-    { label: 'This Month Consultations', value: '156', icon: Calendar, color: 'bg-purple-500', change: '+15%' },
-    { label: 'Success Rate', value: '94%', icon: TrendingUp, color: 'bg-amber-500', change: '+3%' },
+    { label: 'Total Patients', value: mockStats.totalPatients.toString(), icon: Users, color: 'bg-blue-500', change: '+12%' },
+    { label: 'Active Diet Plans', value: mockStats.activeDietPlans.toString(), icon: FileText, color: 'bg-green-500', change: '+8%' },
+    { label: 'This Month Consultations', value: mockStats.monthlyConsultations.toString(), icon: Calendar, color: 'bg-purple-500', change: '+15%' },
+    { label: 'Success Rate', value: `${mockStats.successRate}%`, icon: TrendingUp, color: 'bg-amber-500', change: '+3%' },
   ];
 
-  const recentPatients = [
-    { name: 'Priya Sharma', age: 32, lastVisit: '2 days ago', condition: 'Weight Management' },
-    { name: 'Rajesh Kumar', age: 45, lastVisit: '1 week ago', condition: 'Digestive Issues' },
-    { name: 'Anita Singh', age: 28, lastVisit: '3 days ago', condition: 'Stress & Anxiety' },
-    { name: 'Vikram Patel', age: 52, lastVisit: '5 days ago', condition: 'Joint Pain' },
-  ];
-
-  const upcomingAppointments = [
-    { patient: 'Meera Joshi', time: '10:00 AM', type: 'Follow-up' },
-    { patient: 'Arjun Gupta', time: '11:30 AM', type: 'New Consultation' },
-    { patient: 'Kavya Reddy', time: '2:00 PM', type: 'Diet Review' },
-    { patient: 'Sanjay Mehta', time: '3:30 PM', type: 'Progress Check' },
-  ];
+  const recentPatients = mockPatients.slice(0, 4);
+  const upcomingAppointments = mockAppointments;
 
   return (
     <div className="flex">
@@ -133,7 +123,11 @@ const DoctorDashboard: React.FC<DoctorDashboardProps> = ({ onNavigate }) => {
               </div>
               <div className="divide-y divide-gray-200">
                 {recentPatients.map((patient, index) => (
-                  <div key={index} className="p-6 hover:bg-gray-50 transition-colors cursor-pointer">
+                  <div 
+                    key={index} 
+                    className="p-6 hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => onNavigate('patient-profile')}
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
